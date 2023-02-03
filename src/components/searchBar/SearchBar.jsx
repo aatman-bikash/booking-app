@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { DateRange } from 'react-date-range';
 import 'react-date-range/dist/styles.css'; // main css file
 import 'react-date-range/dist/theme/default.css'; // theme css file
@@ -24,6 +24,20 @@ const SearchBar = () => {
     rooms: 1,
   });
 
+  let dateRef = useRef();
+  let optionsRef = useRef();
+
+  useEffect(() => {
+    let handler = (event) => {
+      if (!dateRef.current.contains(event.target)) setOpenDate(false);
+      if (!optionsRef.current.contains(event.target)) setOpenOptions(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => {
+      document.removeEventListener('mousedown', handler);
+    };
+  });
+
   const handleOptions = (item, action) => {
     setOptions((prev) => {
       return {
@@ -36,7 +50,7 @@ const SearchBar = () => {
   return (
     <div className='headerSearch'>
       <div className='headerSearchItem'>
-        <div className='headerSearchItemContainer'>
+        <div className='headerSearchItemContainer headerSearchLocation'>
           <FontAwesomeIcon icon={faLocationDot} className='headerSearchIcon' />
           <input
             type='text'
@@ -46,7 +60,7 @@ const SearchBar = () => {
         </div>
       </div>
 
-      <div className='headerSearchItem'>
+      <div ref={dateRef} className='headerSearchItem'>
         <div
           className='headerSearchItemContainer'
           onClick={() => {
@@ -76,7 +90,7 @@ const SearchBar = () => {
         )}
       </div>
 
-      <div className='headerSearchItem'>
+      <div ref={optionsRef} className='headerSearchItem'>
         <div
           className='headerSearchItemContainer'
           onClick={() => {
