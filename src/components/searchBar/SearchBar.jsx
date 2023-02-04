@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { DateRange } from 'react-date-range';
 import 'react-date-range/dist/styles.css'; // main css file
 import 'react-date-range/dist/theme/default.css'; // theme css file
@@ -6,6 +6,7 @@ import format from 'date-fns/format';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendarDays } from '@fortawesome/free-regular-svg-icons';
 import { faLocationDot, faUsers } from '@fortawesome/free-solid-svg-icons';
+import { useOutsideClickEvent } from '../../hooks';
 import './searchbar.css';
 
 const SearchBar = () => {
@@ -24,18 +25,12 @@ const SearchBar = () => {
     rooms: 1,
   });
 
-  let dateRef = useRef();
-  let optionsRef = useRef();
+  let dateRef = useOutsideClickEvent(() => {
+    setOpenDate(false);
+  });
 
-  useEffect(() => {
-    let handler = (event) => {
-      if (!dateRef.current.contains(event.target)) setOpenDate(false);
-      if (!optionsRef.current.contains(event.target)) setOpenOptions(false);
-    };
-    document.addEventListener('mousedown', handler);
-    return () => {
-      document.removeEventListener('mousedown', handler);
-    };
+  let optionsRef = useOutsideClickEvent(() => {
+    setOpenOptions(false);
   });
 
   const handleOptions = (item, action) => {
